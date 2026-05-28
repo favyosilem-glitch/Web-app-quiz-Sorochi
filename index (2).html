@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ChemSafe Challenge | Chemicals Quiz for Young Learners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', 'Comic Neue', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #b9f6ca 0%, #6dd5ed 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* main quiz card */
+        .quiz-container {
+            max-width: 950px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px rgba(0, 30, 20, 0.25);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border: 2px solid rgba(46, 125, 50, 0.3);
+        }
+
+        /* header with friendly badge */
+        .quiz-header {
+            background: #0f4c3a;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .quiz-header h1 {
+            font-size: 1.6rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #e0ffcd, #b2ffdb);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: none;
+        }
+
+        .quiz-header .badge {
+            background-color: #ffb74d;
+            color: #1e3a2f;
+            padding: 0.3rem 0.9rem;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* progress & score area */
+        .progress-area {
+            background: #e0f2e9;
+            padding: 0.7rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #145a3b;
+            border-bottom: 1px solid #b2dfdb;
+        }
+
+        /* question area */
+        .question-card {
+            padding: 1.8rem 2rem 1rem 2rem;
+        }
+
+        .question-text {
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: #05472e;
+            background: #e8f5e9;
+            padding: 0.9rem 1.4rem;
+            border-radius: 2rem;
+            margin-bottom: 1.8rem;
+            line-height: 1.4;
+            border-left: 10px solid #2e7d64;
+        }
+
+        /* options grid */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .option {
+            background: white;
+            border-radius: 60px;
+            border: 2px solid #c8e6df;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 1rem 0.2rem 0.7rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .option:hover {
+            background: #d9f0ec;
+            border-color: #2a9d8f;
+            transform: scale(0.99);
+        }
+
+        .option input {
+            margin: 0 1rem 0 0.5rem;
+            transform: scale(1.2);
+            accent-color: #1b8c6e;
+            cursor: pointer;
+        }
+
+        .option label {
+            flex: 1;
+            padding: 0.8rem 0.5rem 0.8rem 0;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1b4332;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+        }
+
+        /* navigation buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem 1.8rem 2rem;
+            gap: 1rem;
+        }
+
+        button {
+            background: #2c6e4f;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 0.7rem 1.9rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background: #1f523c;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #submitBtn {
+            background: #0f6b4a;
+            box-shadow: 0 4px 12px #0a6b4a60;
+        }
+
+        #submitBtn:hover {
+            background: #0b543b;
+        }
+
+        /* score sheet panel */
+        .score-panel {
+            background: #fef9e6;
+            margin: 0 1.5rem 2rem 1.5rem;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 2px solid #bbdfc5;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        .score-header {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #2d6a4f;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-detail {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .score-detail table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .score-detail th, .score-detail td {
+            text-align: left;
+            padding: 0.6rem 0.3rem;
+            border-bottom: 1px solid #cfe6d5;
+        }
+
+        .score-detail th {
+            color: #1a5d3e;
+        }
+
+        .correct-answer-mark {
+            color: #15855c;
+            font-weight: bold;
+        }
+
+        .wrong-answer-mark {
+            color: #c7362b;
+            font-weight: bold;
+        }
+
+        .final-score {
+            text-align: center;
+            background: #c8f0e1;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .feedback-message {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #00735c;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .question-text {
+                font-size: 1.1rem;
+            }
+            .option label {
+                font-size: 0.85rem;
+            }
+            .nav-buttons button {
+                padding: 0.5rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container" id="quizApp">
+    <div class="quiz-header">
+        <h1>🧪 ChemSafe Explorers ⚗️</h1>
+        <div class="badge">🔬 Ages 10+ | Safety First</div>
+    </div>
+    <div class="progress-area">
+        <span>📋 Question <span id="currentQNumber">1</span> / <span id="totalQ">20</span></span>
+        <span>⭐ Answer saved: <span id="answeredCount">0</span> / 20</span>
+    </div>
+    <div class="question-card" id="questionCard">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options-list" id="optionsContainer"></div>
+        <div class="nav-buttons">
+            <button id="prevBtn" aria-label="Previous">◀ Previous</button>
+            <button id="nextBtn" aria-label="Next">Next ▶</button>
+            <button id="submitBtn" aria-label="Submit quiz">✅ Submit Quiz</button>
+        </div>
+        <div class="feedback-message" id="feedbackMsg"></div>
+    </div>
+
+    <!-- Score sheet section (hidden at first) -->
+    <div id="scoreSheet" class="score-panel hide">
+        <div class="score-header">🏆 Your Safety Scorecard 🧴</div>
+        <div class="score-detail" id="scoreDetailTable"></div>
+        <div class="final-score" id="finalScoreMsg"></div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <button id="restartQuizBtn" style="background:#2e7d64;">🔄 Try Again</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ----- 20 Multiple Choice Questions (external exam bank style, practical, safe chemistry)
+    const QUESTIONS = [
+        { text: "What is a chemical?", options: ["Only liquids found in labs", "Any substance that has a fixed composition and properties", "Only toxic poisons", "Only things that burn", "Only medicines"], correct: 1 },
+        { text: "Which of the following is an example of a household chemical?", options: ["Apple juice", "Bleach (sodium hypochlorite)", "Pure water", "Wooden chair", "Cotton t-shirt"], correct: 1 },
+        { text: "Which class of chemicals includes acids like vinegar and lemon juice?", options: ["Bases", "Neutral substances", "Acids", "Salts", "Organic solvents"], correct: 2 },
+        { text: "A chemical label shows a flame symbol. What hazard does it mean?", options: ["Toxic", "Corrosive", "Flammable", "Explosive", "Radioactive"], correct: 2 },
+        { text: "Which safety measure should you ALWAYS take before using a chemical in a science experiment?", options: ["Taste a small amount", "Wear safety goggles and read instructions", "Mix with water immediately", "Smell it directly", "Work alone in a closed room"], correct: 1 },
+        { text: "What does 'corrosive' mean when referring to a hazardous chemical?", options: ["It catches fire easily", "It can burn or destroy skin/materials", "It is poisonous if swallowed", "It explodes when heated", "It causes allergy only"], correct: 1 },
+        { text: "Which is the safest way to dispose of leftover chemical solution in a school lab?", options: ["Pour down the sink without thinking", "Throw in the trash bin", "Follow teacher's instructions and approved waste container", "Leave it on the bench", "Mix with detergent"], correct: 2 },
+        { text: "Organic chemicals are mainly compounds that contain which element?", options: ["Oxygen", "Nitrogen", "Carbon", "Iron", "Sodium"], correct: 2 },
+        { text: "If a chemical container has a skull and crossbones symbol, what danger does it warn about?", options: ["Flammability", "Explosive risk", "Acute toxicity (poison)", "Radioactive hazard", "Environmental damage"], correct: 2 },
+        { text: "Which of these is NOT a class of chemical based on hazard nature?", options: ["Flammable", "Oxidising", "Corrosive", "Edible", "Toxic"], correct: 3 },
+        { text: "When you mix baking soda and vinegar, you see bubbles. This is an example of:", options: ["Physical change", "Chemical reaction", "Melting", "Evaporation", "Freezing"], correct: 1 },
+        { text: "What does MSDS stand for in chemical safety?", options: ["Material Safety Data Sheet", "Major Substance Disposal System", "Micro Safety Detection Scan", "Make Safe Disposal Standard", "Medical Science Data Sheet"], correct: 0 },
+        { text: "What should you do if a chemical splashes into your eyes?", options: ["Rub eyes immediately", "Use a cloth to wipe", "Flush with plenty of water for 15 minutes and tell an adult", "Wait until it stops stinging", "Apply cream"], correct: 2 },
+        { text: "Which of the following is an example of a flammable liquid?", options: ["Water", "Table salt solution", "Petrol (gasoline)", "Glass cleaner liquid (non-alcohol)", "Sand"], correct: 2 },
+        { text: "Why should you never eat or drink in a chemistry lab?", options: ["Because food tastes bad near chemicals", "Chemicals can contaminate food and cause poisoning", "It’s against dress code", "To keep bench clean", "Food attracts insects"], correct: 1 },
+        { text: "Which symbol would you expect on a drain cleaner containing sodium hydroxide?", options: ["Flammable", "Corrosive", "Explosive", "Oxidising", "Health hazard (chronic)"], correct: 1 },
+        { text: "What is the correct order when putting on personal protective equipment (PPE) for handling strong chemicals?", options: ["Gloves first then goggles", "Goggles, lab coat, then gloves", "Gloves only", "Lab coat only", "Mask only"], correct: 1 },
+        { text: "Which of the following is a neutral chemical (neither acid nor base)?", options: ["Lemon juice (acid)", "Soap solution (base)", "Pure water", "Vinegar", "Baking soda solution"], correct: 2 },
+        { text: "Why should we store household chemicals away from food?", options: ["To save space", "To avoid accidental poisoning or mixing", "Because chemicals smell bad", "To keep kitchen clean", "It looks tidy"], correct: 1 },
+        { text: "If a chemical label says 'oxidising agent', what risk does it have?", options: ["May cause fire or intensify fire", "Toxic to breathe", "Damages metal", "Causes allergic reaction", "Radioactive decay"], correct: 0 }
+    ];
+
+    // validation: exactly 20 questions
+    if (QUESTIONS.length !== 20) console.warn("question count mismatch, got", QUESTIONS.length);
+    const TOTAL_QS = QUESTIONS.length; // 20
+
+    // app state
+    let userAnswers = new Array(TOTAL_QS).fill(null);   // stores index (0..4) or null
+    let currentIndex = 0;          // 0-based
+    let quizSubmitted = false;
+
+    // DOM elements
+    const questionTextEl = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const scoreSheetDiv = document.getElementById("scoreSheet");
+    const questionCardDiv = document.getElementById("questionCard");
+    const currentQNumberSpan = document.getElementById("currentQNumber");
+    const totalQSpan = document.getElementById("totalQ");
+    const answeredCountSpan = document.getElementById("answeredCount");
+    const feedbackMsgDiv = document.getElementById("feedbackMsg");
+    const scoreDetailTable = document.getElementById("scoreDetailTable");
+    const finalScoreMsg = document.getElementById("finalScoreMsg");
+
+    // helper: update answered count display
+    function updateAnsweredCount() {
+        const answered = userAnswers.filter(ans => ans !== null).length;
+        answeredCountSpan.innerText = answered;
+    }
+
+    // render current question (based on currentIndex)
+    function renderCurrentQuestion() {
+        if (quizSubmitted) return;
+        const q = QUESTIONS[currentIndex];
+        if (!q) return;
+        questionTextEl.innerText = `${currentIndex+1}. ${q.text}`;
+        // generate options with radio
+        let optionsHtml = "";
+        const savedAnswer = userAnswers[currentIndex]; // null or index 0-4
+        q.options.forEach((opt, idx) => {
+            const isChecked = (savedAnswer === idx);
+            const radioId = `q${currentIndex}_opt${idx}`;
+            optionsHtml += `
+                <div class="option" data-opt-index="${idx}">
+                    <input type="radio" name="questionRadio" id="${radioId}" value="${idx}" ${isChecked ? 'checked' : ''}>
+                    <label for="${radioId}">${String.fromCharCode(97+idx)}) ${opt}</label>
+                </div>
+            `;
+        });
+        optionsContainer.innerHTML = optionsHtml;
+
+        // attach event listeners to radio changes
+        const radioInputs = optionsContainer.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (quizSubmitted) return;
+                const selectedVal = parseInt(e.target.value);
+                if (!isNaN(selectedVal)) {
+                    userAnswers[currentIndex] = selectedVal;
+                    updateAnsweredCount();
+                    // optional brief feedback
+                    feedbackMsgDiv.innerText = `✔️ Answer saved for Q${currentIndex+1}`;
+                    setTimeout(() => {
+                        if(feedbackMsgDiv.innerText.includes("saved")) feedbackMsgDiv.innerText = "";
+                    }, 1200);
+                }
+            });
+        });
+        
+        // Also clicking on div selects radio
+        document.querySelectorAll('.option').forEach(div => {
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
+                    const radioInside = div.querySelector('input[type="radio"]');
+                    if (radioInside && !quizSubmitted) {
+                        radioInside.checked = true;
+                        // trigger change event
+                        const changeEvt = new Event('change', { bubbles: true });
+                        radioInside.dispatchEvent(changeEvt);
+                    }
+                }
+            });
+        });
+
+        // update question number display
+        currentQNumberSpan.innerText = currentIndex+1;
+        // button states
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = (currentIndex === TOTAL_QS-1);
+    }
+
+    // navigation: previous
+    function goPrev() {
+        if (quizSubmitted) return;
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+        }
+    }
+    // next
+    function goNext() {
+        if (quizSubmitted) return;
+        if (currentIndex < TOTAL_QS-1) {
+            currentIndex++;
+            renderCurrentQuestion();
+        }
+    }
+
+    // compute score and generate comprehensive score sheet
+    function generateScoreSheet() {
+        let totalCorrect = 0;
+        const details = [];
+        for (let i = 0; i < TOTAL_QS; i++) {
+            const userChoice = userAnswers[i];
+            const isCorrect = (userChoice !== null && userChoice === QUESTIONS[i].correct);
+            if (isCorrect) totalCorrect++;
+            const userLetter = (userChoice !== null) ? String.fromCharCode(97+userChoice) : "—";
+            const correctLetter = String.fromCharCode(97+QUESTIONS[i].correct);
+            const correctText = QUESTIONS[i].options[QUESTIONS[i].correct];
+            const statusIcon = isCorrect ? "✅" : "❌";
+            details.push({
+                num: i+1,
+                questionSnippet: QUESTIONS[i].text.length > 70 ? QUESTIONS[i].text.substring(0,67)+"..." : QUESTIONS[i].text,
+                userChoice: userChoice !== null ? `${userLetter}. ${QUESTIONS[i].options[userChoice]}` : "No answer",
+                correctAnswer: `${correctLetter}. ${correctText}`,
+                status: isCorrect ? "Correct" : "Wrong",
+                icon: statusIcon
+            });
+        }
+        const percentage = Math.round((totalCorrect / TOTAL_QS) * 100);
+        let gradeMessage = "";
+        if (percentage >= 90) gradeMessage = "🌟 Excellent! You are a Safety Star! 🌟";
+        else if (percentage >= 75) gradeMessage = "👍 Great job! Keep staying safe with chemicals!";
+        else if (percentage >= 50) gradeMessage = "📘 Good effort! Review safety symbols again.";
+        else gradeMessage = "🧪 Oops! Let's learn more about chemical safety and try again!";
+        
+        // Build HTML table for details
+        let tableHtml = `<table>
+            <thead>
+                <tr><th>#</th><th>Question (short)</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr>
+            </thead>
+            <tbody>`;
+        details.forEach(d => {
+            tableHtml += `<tr>
+                <td>${d.num}</td>
+                <td>${d.questionSnippet}</td>
+                <td>${d.userChoice}</td>
+                <td>${d.correctAnswer}</td>
+                <td class="${d.status === 'Correct' ? 'correct-answer-mark' : 'wrong-answer-mark'}">${d.icon} ${d.status}</td>
+            </tr>`;
+        });
+        tableHtml += `</tbody></table>`;
+        scoreDetailTable.innerHTML = tableHtml;
+        finalScoreMsg.innerHTML = `🎯 Your final score: ${totalCorrect} / ${TOTAL_QS} (${percentage}%) <br> ${gradeMessage}`;
+    }
+
+    // submit action: finalize quiz, show score sheet, disable changes
+    function submitQuiz() {
+        if (quizSubmitted) return;
+        // Check if any unanswered question? but we still allow partial but give feedback
+        const unansweredCount = userAnswers.filter(ans => ans === null).length;
+        if (unansweredCount > 0) {
+            if (!confirm(`⚠️ You have ${unansweredCount} unanswered question(s). Submit anyway? You can review later with restart.`)) {
+                return;
+            }
+        }
+        quizSubmitted = true;
+        // disable radios and navigation
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => radio.disabled = true);
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        submitBtn.disabled = true;
+        // hide question card main area? We'll hide options inside questionCard but keep score visible
+        // to avoid confusion we show score sheet and move question card to lower opacity? Actually we keep but disable
+        // For better UX: display score panel and maybe reduce height
+        generateScoreSheet();
+        scoreSheetDiv.classList.remove("hide");
+        // add small extra message to user
+        feedbackMsgDiv.innerHTML = "🎉 Quiz completed! Check your detailed scorecard below. Click 'Try Again' to practice again.";
+        // also style option labels to show subdued
+        optionsContainer.style.opacity = "0.7";
+        optionsContainer.style.pointerEvents = "none";
+    }
+
+    // Restart quiz fully
+    function restartQuiz() {
+        // reset answers
+        userAnswers = new Array(TOTAL_QS).fill(null);
+        currentIndex = 0;
+        quizSubmitted = false;
+        // re-enable UI
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => radio.disabled = false);
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
+        submitBtn.disabled = false;
+        optionsContainer.style.opacity = "1";
+        optionsContainer.style.pointerEvents = "auto";
+        scoreSheetDiv.classList.add("hide");
+        feedbackMsgDiv.innerHTML = "";
+        updateAnsweredCount();
+        // re-render current question from start
+        renderCurrentQuestion();
+        // extra: reset any disabled states
+        if (currentIndex === 0) prevBtn.disabled = true;
+        if (currentIndex === TOTAL_QS-1) nextBtn.disabled = false;
+    }
+
+    // add event listeners for global buttons
+    function bindEvents() {
+        prevBtn.addEventListener("click", goPrev);
+        nextBtn.addEventListener("click", goNext);
+        submitBtn.addEventListener("click", submitQuiz);
+        // we will dynamically attach restart button after it's rendered, but it exists inside scoreSheet hidden at first, need to use event delegation
+        document.addEventListener("click", (e) => {
+            if (e.target && e.target.id === "restartQuizBtn") {
+                restartQuiz();
+            }
+        });
+    }
+
+    // initial setup
+    function init() {
+        totalQSpan.innerText = TOTAL_QS;
+        updateAnsweredCount();
+        renderCurrentQuestion();
+        bindEvents();
+        // ensure navigation buttons state after render
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = (currentIndex === TOTAL_QS-1);
+    }
+
+    init();
+</script>
+</body>
+</html>
